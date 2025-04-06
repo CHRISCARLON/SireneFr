@@ -16,8 +16,8 @@ export default function Home() {
             <SearchBar />
           ) : (
             <div className="-mt-32">
-              <h1 className="text-2xl font-bold">
-                A simple app to check French Naf Codes
+              <h1 className="text-5xl font-bold">
+                Une application simple pour vérifier le répertoire Sirene
               </h1>
             </div>
           )}
