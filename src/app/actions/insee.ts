@@ -2,7 +2,7 @@
 import { z } from "zod";
 
 const searchSchema = z.object({
-  communeCode: z.string().min(1, "Commune code is required"),
+  communeCode: z.string().min(1, "Un code postal est requis"),
 });
 
 export type SearchResult = {
@@ -21,7 +21,7 @@ export async function searchInseeSiret(
     if (!validation.success) {
       return {
         success: false,
-        error: "Invalid commune code",
+        error: "Code postal invalide",
       };
     }
 
@@ -50,7 +50,6 @@ export async function searchInseeSiret(
       };
     }
 
-    // Parse the response data
     const data = await response.json();
 
     return {

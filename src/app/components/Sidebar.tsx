@@ -12,7 +12,7 @@ const Sidebar = ({ onSubmit }: SidebarProps) => {
           <li>
             <button
               onClick={() => onSubmit("home")}
-              className="w-full text-sm px-3 py-2 text-white rounded-md bg-blue-500 hover:bg-blue-600"
+              className="w-full text-sm px-3 py-2 text-white rounded-md bg-gray-500 hover:bg-blue-600"
             >
               Home
             </button>
@@ -20,9 +20,9 @@ const Sidebar = ({ onSubmit }: SidebarProps) => {
           <li>
             <button
               onClick={() => onSubmit("search")}
-              className="w-full text-sm px-3 py-2 text-white rounded-md bg-blue-500 hover:bg-blue-600"
+              className="w-full text-sm px-3 py-2 text-white rounded-md bg-gray-500 hover:bg-blue-600"
             >
-              Naf
+              🔎
             </button>
           </li>
         </ul>

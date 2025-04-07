@@ -3,8 +3,20 @@
 import React, { useState } from "react";
 import { searchInseeSiret, type SearchResult } from "../actions/insee";
 
-const SearchBar = () => {
-  const [searchQuery, setSearchQuery] = useState("");
+interface SearchBarProps {
+  onSearchComplete?: (result: SearchResult) => void;
+  placeholder?: string;
+  title?: string;
+  defaultValue?: string;
+}
+
+const SearchBar = ({
+  onSearchComplete,
+  placeholder = "Indiquez un code postal...",
+  title = "Chercher le répertoire Sirene",
+  defaultValue = "",
+}: SearchBarProps) => {
+  const [searchQuery, setSearchQuery] = useState(defaultValue);
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<SearchResult | null>(null);
 
@@ -13,12 +25,15 @@ const SearchBar = () => {
     try {
       const result = await searchInseeSiret(formData);
       setResult(result);
+      onSearchComplete?.(result);
     } catch (error) {
       console.error("Search error:", error);
-      setResult({
+      const errorResult: SearchResult = {
         success: false,
         error: "Failed to perform search",
-      });
+      };
+      setResult(errorResult);
+      onSearchComplete?.(errorResult);
     } finally {
       setLoading(false);
     }
@@ -32,7 +47,7 @@ const SearchBar = () => {
   return (
     <div className="w-full max-w-md -mt-32">
       <form action={handleSearch} className="flex flex-col items-center">
-        <h2 className="text-2xl mb-4">Chercher le répertoire Sirene</h2>
+        <h2 className="text-2xl mb-4">{title}</h2>
         <div className="w-full mb-4">
           <input
             type="text"
@@ -40,14 +55,14 @@ const SearchBar = () => {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full px-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-3 focus:ring-blue-600"
-            placeholder="Indiquez un code postal"
+            placeholder={placeholder}
           />
         </div>
         <div className="flex gap-2">
           <button
             type="submit"
             disabled={loading}
-            className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+            className="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-blue-600"
           >
             {loading ? "Recherche en cours..." : "Rechercher"}
           </button>
@@ -55,7 +70,7 @@ const SearchBar = () => {
             <button
               type="button"
               onClick={handleReset}
-              className="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600"
+              className="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-blue-600"
             >
               Réinitialiser
             </button>
