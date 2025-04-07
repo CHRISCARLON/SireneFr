@@ -16,7 +16,7 @@ export default function Home() {
             <SearchBar />
           ) : (
             <div className="-mt-32">
-              <h1 className="text-5xl font-bold">
+              <h1 className="text-2xl font-bold">
                 Une application simple pour vérifier le répertoire Sirene
               </h1>
             </div>

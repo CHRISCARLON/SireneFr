@@ -3,8 +3,8 @@ import { JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 
 const jetbrainsMono = JetBrains_Mono({
-  variable: "--font-jetbrains-mono",
   subsets: ["latin"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -19,7 +19,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${jetbrainsMono.variable}`}>{children}</body>
+      <body className={jetbrainsMono.className}>{children}</body>
     </html>
   );
 }

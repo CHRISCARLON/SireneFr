@@ -24,6 +24,11 @@ const SearchBar = () => {
     }
   }
 
+  const handleReset = () => {
+    setSearchQuery("");
+    setResult(null);
+  };
+
   return (
     <div className="w-full max-w-md -mt-32">
       <form action={handleSearch} className="flex flex-col items-center">
@@ -34,25 +39,36 @@ const SearchBar = () => {
             name="communeCode"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full px-4 py-2 border border-gray-400 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-3 focus:ring-blue-600"
             placeholder="Indiquez un code postal"
           />
         </div>
-        <button
-          type="submit"
-          disabled={loading}
-          className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:bg-blue-300"
-        >
-          {loading ? "Recherche en cours..." : "Rechercher"}
-        </button>
+        <div className="flex gap-2">
+          <button
+            type="submit"
+            disabled={loading}
+            className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+          >
+            {loading ? "Recherche en cours..." : "Rechercher"}
+          </button>
+          {result && (
+            <button
+              type="button"
+              onClick={handleReset}
+              className="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600"
+            >
+              Réinitialiser
+            </button>
+          )}
+        </div>
       </form>
 
       {result && (
         <div className="mt-6">
           {result.success ? (
-            <div className="bg-green-50 p-4 rounded-md border border-green-200">
-              <h3 className="font-bold mb-2">Résultats:</h3>
-              <pre className="text-sm overflow-auto max-h-96">
+            <div className="p-4 rounded-md border bg-green-50 border-green-200">
+              <h3 className="font-bold mb-2 text-black">Résultats:</h3>
+              <pre className="text-sm overflow-auto max-h-96 text-black">
                 {JSON.stringify(result.data, null, 2)}
               </pre>
             </div>
