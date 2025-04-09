@@ -1,4 +1,4 @@
-# SIRENE Search
+# Sirene Search
 
 Simple Next js app to explore the French Sirene API. 
 
