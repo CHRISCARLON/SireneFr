@@ -4,7 +4,7 @@ Simple Next js app to explore the French Sirene API.
 
 What it currently does:
 
-- Auto suggest API as an address is typed - suggestion potential matches as you go.
+- Auto suggest API as an address is typed - suggesting potential matches as you go.
 - Search national address base when and address is selected.
 - Search Sirene for all active companies on that street with at least 1 employee.
 
