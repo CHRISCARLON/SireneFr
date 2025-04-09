@@ -1,6 +1,6 @@
 # Naf Search
 
-<img width="1499" alt="Screenshot 2025-04-06 at 00 54 51" src="https://github.com/user-attachments/assets/c1debb2a-dc43-45f3-a408-572594ccab3c" />
+<img width="1229" alt="Screenshot 2025-04-09 at 23 44 34" src="https://github.com/user-attachments/assets/cd31a6b3-9cb8-40c7-9ad0-7335ddad54b7" />
 
 ---
 
