@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import Sidebar from "./components/Sidebar";
-import SearchBar from "./components/SearchBar";
+import AddressSearchBar from "./components/AddressSearchBar";
 
 export default function Home() {
   const [activeComponent, setActiveComponent] = useState<string>("home");
@@ -13,7 +13,7 @@ export default function Home() {
       <main className="ml-28 p-4 flex-grow">
         <div className="min-h-screen flex items-center justify-center">
           {activeComponent === "search" ? (
-            <SearchBar />
+            <AddressSearchBar />
           ) : (
             <div className="-mt-32">
               <h1 className="text-2xl font-bold">

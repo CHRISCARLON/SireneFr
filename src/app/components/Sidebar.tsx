@@ -22,7 +22,7 @@ const Sidebar = ({ onSubmit }: SidebarProps) => {
               onClick={() => onSubmit("search")}
               className="w-full text-sm px-3 py-2 text-white rounded-md bg-gray-500 hover:bg-blue-600"
             >
-              🔎
+              🇫🇷
             </button>
           </li>
         </ul>

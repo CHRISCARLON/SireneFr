@@ -2,7 +2,7 @@
 import { z } from "zod";
 
 const searchSchema = z.object({
-  codePostal: z.string().min(1, "Un code postal est requis"),
+  address: z.string().min(1, "Une adresse est requise"),
 });
 
 // Define interface for the INSEE API response
@@ -56,13 +56,13 @@ export async function searchInseeSiret(
   formData: FormData
 ): Promise<SearchResult> {
   try {
-    const codePostal = formData.get("codePostal") as string;
-    const validation = searchSchema.safeParse({ codePostal });
+    const address = formData.get("address") as string;
+    const validation = searchSchema.safeParse({ address });
 
     if (!validation.success) {
       return {
         success: false,
-        error: "Code postal invalide",
+        error: "Adresse invalide",
       };
     }
 
@@ -75,10 +75,11 @@ export async function searchInseeSiret(
     }
 
     const query = encodeURIComponent(
-      `codePostalEtablissement:${codePostal} AND periode(etatAdministratifEtablissement:A)`
+      `identifiantAdresseEtablissement:${address}_B AND periode(etatAdministratifEtablissement:A AND caractereEmployeurEtablissement: O)`
     );
 
     const url = `https://api.insee.fr/api-sirene/3.11/siret?q=${query}`;
+    console.log(url);
 
     const response = await fetch(url, {
       headers: {
