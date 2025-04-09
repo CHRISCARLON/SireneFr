@@ -2,12 +2,53 @@
 import { z } from "zod";
 
 const searchSchema = z.object({
-  communeCode: z.string().min(1, "Un code postal est requis"),
+  codePostal: z.string().min(1, "Un code postal est requis"),
 });
+
+// Define interface for the INSEE API response
+interface InseeApiResponse {
+  header: {
+    statut: number;
+    message: string;
+    total: number;
+    debut: number;
+    nombre: number;
+  };
+  etablissements: {
+    siren: string;
+    nic: string;
+    siret: string;
+    dateCreationEtablissement: string;
+    uniteLegale: {
+      denominationUniteLegale?: string;
+      nomUniteLegale?: string;
+      prenom1UniteLegale?: string;
+      activitePrincipaleUniteLegale?: string;
+    };
+    adresseEtablissement: {
+      numeroVoieEtablissement?: string;
+      typeVoieEtablissement?: string;
+      libelleVoieEtablissement?: string;
+      codePostalEtablissement?: string;
+      libelleCommuneEtablissement?: string;
+    };
+  }[];
+}
+
+export type SimplifiedCompany = {
+  siret: string;
+  nom: string;
+  adresse: string;
+  codePostal: string;
+  ville: string;
+  activite: string;
+  dateCreation: string;
+};
 
 export type SearchResult = {
   success: boolean;
-  data?: unknown;
+  total?: number;
+  companies?: SimplifiedCompany[];
   error?: string;
 };
 
@@ -15,8 +56,8 @@ export async function searchInseeSiret(
   formData: FormData
 ): Promise<SearchResult> {
   try {
-    const communeCode = formData.get("communeCode") as string;
-    const validation = searchSchema.safeParse({ communeCode });
+    const codePostal = formData.get("codePostal") as string;
+    const validation = searchSchema.safeParse({ codePostal });
 
     if (!validation.success) {
       return {
@@ -33,7 +74,11 @@ export async function searchInseeSiret(
       };
     }
 
-    const url = `https://api.insee.fr/api-sirene/3.11/siret?q=codeCommuneEtablissement%3A${communeCode}`;
+    const query = encodeURIComponent(
+      `codePostalEtablissement:${codePostal} AND periode(etatAdministratifEtablissement:A)`
+    );
+
+    const url = `https://api.insee.fr/api-sirene/3.11/siret?q=${query}`;
 
     const response = await fetch(url, {
       headers: {
@@ -50,11 +95,37 @@ export async function searchInseeSiret(
       };
     }
 
-    const data = await response.json();
+    const rawData = (await response.json()) as InseeApiResponse;
+
+    // Extract only the data we need
+    const total = rawData.header?.total || 0;
+    const companies = (rawData.etablissements || []).map((etab) => {
+      // Extract company information into simplified format
+      return {
+        siret: etab.siret,
+        nom:
+          etab.uniteLegale?.denominationUniteLegale ||
+          `${etab.uniteLegale?.nomUniteLegale || ""} ${
+            etab.uniteLegale?.prenom1UniteLegale || ""
+          }`,
+        adresse: [
+          etab.adresseEtablissement?.numeroVoieEtablissement,
+          etab.adresseEtablissement?.typeVoieEtablissement,
+          etab.adresseEtablissement?.libelleVoieEtablissement,
+        ]
+          .filter(Boolean)
+          .join(" "),
+        codePostal: etab.adresseEtablissement?.codePostalEtablissement || "",
+        ville: etab.adresseEtablissement?.libelleCommuneEtablissement || "",
+        activite: etab.uniteLegale?.activitePrincipaleUniteLegale || "",
+        dateCreation: etab.dateCreationEtablissement,
+      };
+    });
 
     return {
       success: true,
-      data,
+      total,
+      companies,
     };
   } catch (error) {
     console.error("INSEE API error:", error);
