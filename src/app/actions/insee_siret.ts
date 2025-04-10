@@ -1,8 +1,15 @@
 "use server";
 import { z } from "zod";
+import pino from "pino";
 
+// Schema for input validation
 const searchSchema = z.object({
   address: z.string().min(1, "Une adresse est requise"),
+});
+
+const logger = pino({
+  name: "insee-siret-actions",
+  level: "info",
 });
 
 // Define interface for the INSEE API response
@@ -53,7 +60,7 @@ export type SearchResult = {
 };
 
 export async function searchInseeSiret(
-  formData: FormData
+  formData: FormData,
 ): Promise<SearchResult> {
   try {
     const address = formData.get("address") as string;
@@ -75,11 +82,16 @@ export async function searchInseeSiret(
     }
 
     const query = encodeURIComponent(
-      `identifiantAdresseEtablissement:${address}_B AND periode(etatAdministratifEtablissement:A AND caractereEmployeurEtablissement: O)`
+      `identifiantAdresseEtablissement:${address}_B AND periode(etatAdministratifEtablissement:A AND caractereEmployeurEtablissement: O)`,
     );
 
     const url = `https://api.insee.fr/api-sirene/3.11/siret?q=${query}`;
-    console.log(url);
+    logger.info(
+      {
+        url: url,
+      },
+      "API Request",
+    );
 
     const response = await fetch(url, {
       headers: {
@@ -98,8 +110,8 @@ export async function searchInseeSiret(
 
     const rawData = (await response.json()) as InseeApiResponse;
 
-    // Extract only the data we need
     const total = rawData.header?.total || 0;
+
     const companies = (rawData.etablissements || []).map((etab) => {
       // Extract company information into simplified format
       return {

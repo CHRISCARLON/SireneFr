@@ -1,9 +1,15 @@
 "use server";
 import { z } from "zod";
+import pino from "pino";
 
 // Schema for input validation
 const searchSchema = z.object({
   text: z.string().min(1, "Un texte de recherche est requis"),
+});
+
+const logger = pino({
+  name: "address-actions",
+  level: "info",
 });
 
 // Define interfaces for API responses
@@ -92,7 +98,7 @@ export type AddressSearchResult = {
 
 // Function for autocomplete suggestions
 export async function getAddressSuggestions(
-  formData: FormData
+  formData: FormData,
 ): Promise<AutocompleteResult> {
   try {
     const text = formData.get("text") as string;
@@ -107,7 +113,7 @@ export async function getAddressSuggestions(
 
     // Call the Géoplateforme autocomplete API
     const url = `https://data.geopf.fr/geocodage/completion?text=${encodeURIComponent(
-      text
+      text,
     )}`;
 
     const response = await fetch(url, {
@@ -126,7 +132,7 @@ export async function getAddressSuggestions(
 
     const data = (await response.json()) as GeoplatformeResponse;
 
-    // Transform response into our format
+    // Transform response
     const suggestions = data.results.map((result) => ({
       label: result.fulltext,
       city: result.city,
@@ -149,8 +155,9 @@ export async function getAddressSuggestions(
 
 // Function to search full address details after selection
 export async function searchAddress(
-  formData: FormData
+  formData: FormData,
 ): Promise<AddressSearchResult> {
+  logger.info("searchAddress called with query: %s", formData.get("query"));
   try {
     const query = formData.get("query") as string;
     const validation = searchSchema.safeParse({ text: query });
@@ -164,7 +171,7 @@ export async function searchAddress(
 
     // Call the BAN API
     const url = `https://api-adresse.data.gouv.fr/search/?q=${encodeURIComponent(
-      query
+      query,
     )}&limit=1`;
 
     const response = await fetch(url, {

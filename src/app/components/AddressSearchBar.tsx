@@ -15,14 +15,12 @@ import {
 interface AddressSearchBarProps {
   onSearchComplete?: (result: AddressSearchResult) => void;
   placeholder?: string;
-  title?: string;
   defaultValue?: string;
 }
 
 const AddressSearchBar = ({
   onSearchComplete,
-  placeholder = "Rechercher une adresse...",
-  title = "Recherche d'adresse",
+  placeholder = "Saisir une adresse...",
   defaultValue = "",
 }: AddressSearchBarProps) => {
   const [searchQuery, setSearchQuery] = useState(defaultValue);
@@ -52,7 +50,7 @@ const AddressSearchBar = ({
     };
   }, []);
 
-  // Fetch suggestions as user types
+  // Fetch suggestions as the user types
   async function handleInputChange(e: React.ChangeEvent<HTMLInputElement>) {
     const value = e.target.value;
     setSearchQuery(value);
@@ -136,6 +134,7 @@ const AddressSearchBar = ({
     }
   }
 
+  // Reset the search bar back to normal
   const handleReset = () => {
     setSearchQuery("");
     setResult(null);
@@ -144,20 +143,16 @@ const AddressSearchBar = ({
   };
 
   return (
-    <div
-      className={`w-full ${
-        result || inseeResult ? "max-w-6xl" : "max-w-2xl"
-      } mx-auto transition-all duration-300`}
-    >
-      <div className="bg-gray-900 p-6 rounded-lg border border-gray-700 mb-6">
-        <h2 className="text-2xl mb-4 text-white text-center">{title}</h2>
+    <div className={`w-full mx-auto transition-all duration-300`}>
+      <div className="max-w-2xl mx-auto bg-blue-50 p-6 rounded-lg border border-blue-200 shadow-md">
+        <h2 className="text-2xl mb-4 text-blue-800 text-center font-semibold"></h2>
         <div className="flex flex-col items-center">
-          <div className="w-full max-w-md mb-4 relative">
+          <div className="w-full max-w-xl mb-4 relative">
             <input
               type="text"
               value={searchQuery}
               onChange={handleInputChange}
-              className="w-full px-4 py-2 rounded-md border border-gray-600 bg-gray-800 text-white focus:outline-none focus:ring-3 focus:ring-blue-500"
+              className="w-full px-4 py-2 rounded-md border border-blue-300 bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm"
               placeholder={placeholder}
               autoComplete="off"
             />
@@ -166,12 +161,12 @@ const AddressSearchBar = ({
             {showSuggestions && suggestions.length > 0 && (
               <div
                 ref={suggestionsRef}
-                className="absolute z-10 w-full bg-gray-800 border border-gray-700 rounded-md mt-1 max-h-60 overflow-y-auto"
+                className="absolute z-10 w-full bg-white border border-blue-200 rounded-md mt-1 max-h-60 overflow-y-auto shadow-lg"
               >
                 {suggestions.map((suggestion, index) => (
                   <div
                     key={index}
-                    className="px-4 py-2 hover:bg-gray-700 cursor-pointer text-white"
+                    className="px-4 py-2 hover:bg-blue-50 cursor-pointer text-gray-800"
                     onClick={() => handleSelectSuggestion(suggestion)}
                   >
                     {suggestion.label}
@@ -183,7 +178,7 @@ const AddressSearchBar = ({
 
           <div className="flex gap-2">
             {loading && (
-              <div className="px-4 py-2 bg-blue-700 text-white rounded-md">
+              <div className="px-4 py-2 bg-blue-100 text-blue-800 rounded-md border border-blue-200">
                 Recherche en cours...
               </div>
             )}
@@ -191,7 +186,7 @@ const AddressSearchBar = ({
               <button
                 type="button"
                 onClick={handleReset}
-                className="px-4 py-2 bg-gray-700 text-white rounded-md hover:bg-gray-600"
+                className="px-4 py-2 bg-gray-100 text-gray-700 rounded-md border border-gray-300 hover:bg-blue-400 transition-colors hover:text-white"
               >
                 Réinitialiser
               </button>
@@ -200,146 +195,161 @@ const AddressSearchBar = ({
         </div>
       </div>
 
+      {/* Results sections */}
       {result && (
-        <div className="mt-2">
+        <div className="mt-16 w-full max-w-6xl mx-auto">
           {result.success && result.address ? (
-            <div className="p-4 rounded-md border border-gray-700 bg-gray-800 text-white">
-              <h3 className="font-bold mb-2 text-green-400">Adresse trouvée</h3>
+            <div className="p-4 rounded-md border border-blue-200 bg-white shadow-md text-gray-800">
+              <h3 className="font-bold mb-2 text-green-600">Adresse trouvée</h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {/* Left column - Main address info */}
                 <div>
-                  <h4 className="text-blue-400 text-sm uppercase font-bold mb-2">
+                  <h4 className="text-blue-700 text-sm uppercase font-bold mb-2">
                     Adresse principale
                   </h4>
                   <p className="mb-1">
-                    <span className="text-gray-400">Adresse:</span>{" "}
+                    <span className="text-gray-600 font-medium">Adresse:</span>{" "}
                     {result.address.label}
                   </p>
                   {result.address.housenumber && (
                     <p className="mb-1">
-                      <span className="text-gray-400">Numéro:</span>{" "}
+                      <span className="text-gray-600 font-medium">Numéro:</span>{" "}
                       {result.address.housenumber}
                     </p>
                   )}
                   {result.address.street && (
                     <p className="mb-1">
-                      <span className="text-gray-400">Rue:</span>{" "}
+                      <span className="text-gray-600 font-medium">Rue:</span>{" "}
                       {result.address.street}
                     </p>
                   )}
                   <p className="mb-1">
-                    <span className="text-gray-400">Type:</span>{" "}
+                    <span className="text-gray-600 font-medium">Type:</span>{" "}
                     {result.address.type || "Non spécifié"}
                   </p>
                 </div>
 
                 {/* Middle column - Administrative info */}
                 <div>
-                  <h4 className="text-blue-400 text-sm uppercase font-bold mb-2">
+                  <h4 className="text-blue-700 text-sm uppercase font-bold mb-2">
                     Informations administratives
                   </h4>
                   <p className="mb-1">
-                    <span className="text-gray-400">Code postal:</span>{" "}
+                    <span className="text-gray-600 font-medium">
+                      Code postal:
+                    </span>{" "}
                     {result.address.postcode}
                   </p>
                   <p className="mb-1">
-                    <span className="text-gray-400">Ville:</span>{" "}
+                    <span className="text-gray-600 font-medium">Ville:</span>{" "}
                     {result.address.city}
                   </p>
                   <p className="mb-1">
-                    <span className="text-gray-400">Code INSEE:</span>{" "}
+                    <span className="text-gray-600 font-medium">
+                      Code INSEE:
+                    </span>{" "}
                     {result.address.citycode}
                   </p>
                   <p className="mb-1">
-                    <span className="text-gray-400">Contexte:</span>{" "}
+                    <span className="text-gray-600 font-medium">Contexte:</span>{" "}
                     {result.address.context || "Non disponible"}
                   </p>
                   <p className="mb-1">
-                    <span className="text-gray-400">ID:</span>{" "}
+                    <span className="text-gray-600 font-medium">ID:</span>{" "}
                     {result.address.id}
                   </p>
                 </div>
 
                 {/* Right column - Spatial info */}
                 <div>
-                  <h4 className="text-blue-400 text-sm uppercase font-bold mb-2">
+                  <h4 className="text-blue-700 text-sm uppercase font-bold mb-2">
                     Données spatiales
                   </h4>
                   <p className="mb-1">
-                    <span className="text-gray-400">Importance:</span>{" "}
+                    <span className="text-gray-600 font-medium">
+                      Importance:
+                    </span>{" "}
                     {result.address.importance || "Non spécifié"}
                   </p>
                   <p className="mb-1">
-                    <span className="text-gray-400">Score:</span>{" "}
+                    <span className="text-gray-600 font-medium">Score:</span>{" "}
                     {result.address.score || "Non spécifié"}
                   </p>
                   <p className="mb-1">
-                    <span className="text-gray-400">Coordonnées GPS:</span>{" "}
+                    <span className="text-gray-600 font-medium">
+                      Coordonnées GPS:
+                    </span>{" "}
                     {result.address.coordinates[1]},{" "}
                     {result.address.coordinates[0]}
                   </p>
                   <p className="mb-1">
-                    <span className="text-gray-400">X:</span>{" "}
+                    <span className="text-gray-600 font-medium">X:</span>{" "}
                     {result.address.x || "Non disponible"}
                   </p>
                   <p className="mb-1">
-                    <span className="text-gray-400">Y:</span>{" "}
+                    <span className="text-gray-600 font-medium">Y:</span>{" "}
                     {result.address.y || "Non disponible"}
                   </p>
                 </div>
               </div>
             </div>
           ) : (
-            <div className="bg-red-900 p-4 rounded-md border border-red-700 text-red-100">
+            <div className="bg-red-50 p-4 rounded-md border border-red-200 text-red-700">
               <p>Erreur: {result.error}</p>
             </div>
           )}
         </div>
       )}
 
-      {/* INSEE company information section */}
+      {/* INSEE company information */}
       {inseeLoading && (
-        <div className="mt-4 p-4 bg-blue-900 rounded-md border border-blue-700 text-white">
-          <p>Recherche des entreprises en cours...</p>
+        <div className="mt-16 max-w-6xl mx-auto p-4 bg-blue-50 rounded-md border border-blue-200 text-blue-700">
+          <p>Recherche en cours...</p>
         </div>
       )}
 
       {inseeResult && (
-        <div className="mt-4">
+        <div className="mt-16 w-full max-w-6xl mx-auto">
           {inseeResult.success &&
           inseeResult.companies &&
           inseeResult.companies.length > 0 ? (
-            <div className="p-4 rounded-md border border-gray-700 bg-gray-800 text-white">
-              <h3 className="font-bold mb-2">
+            <div className="p-4 rounded-md border border-blue-200 bg-white shadow-md text-gray-800 w-full">
+              <h3 className="font-bold mb-4 text-lg text-blue-800">
                 Liste des établissements actifs et employeurs (
                 {inseeResult.total} au total et{" "}
                 {Math.min(inseeResult.companies.length, 20)} affichés)
               </h3>
-              <div className="overflow-x-auto">
-                <table className="w-full border-collapse">
+              <div className="w-full overflow-x-auto">
+                <table className="w-full min-w-full table-auto">
                   <thead>
-                    <tr className="border-b border-gray-700 text-left">
-                      <th className="p-2 text-blue-400">Nom</th>
-                      <th className="p-2 text-blue-400">SIRET</th>
-                      <th className="p-2 text-blue-400">Adresse</th>
-                      <th className="p-2 text-blue-400">Activité</th>
-                      <th className="p-2 text-blue-400">Date création</th>
+                    <tr className="border-b-2 border-blue-200 text-left bg-blue-50">
+                      <th className="p-3 text-blue-700 font-semibold">Nom</th>
+                      <th className="p-3 text-blue-700 font-semibold">SIRET</th>
+                      <th className="p-3 text-blue-700 font-semibold">
+                        Adresse
+                      </th>
+                      <th className="p-3 text-blue-700 font-semibold">
+                        Activité
+                      </th>
+                      <th className="p-3 text-blue-700 font-semibold">
+                        Date création
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
                     {inseeResult.companies.map((company, index) => (
                       <tr
                         key={index}
-                        className="border-b border-gray-700 hover:bg-gray-700"
+                        className="border-b border-blue-100 hover:bg-blue-50 transition-colors"
                       >
-                        <td className="p-2">{company.nom}</td>
-                        <td className="p-2">{company.siret}</td>
-                        <td className="p-2">
+                        <td className="p-3 font-medium">{company.nom}</td>
+                        <td className="p-3">{company.siret}</td>
+                        <td className="p-3">
                           {company.adresse}, {company.codePostal}{" "}
                           {company.ville}
                         </td>
-                        <td className="p-2">{company.activite}</td>
-                        <td className="p-2">
+                        <td className="p-3">{company.activite}</td>
+                        <td className="p-3">
                           {new Date(company.dateCreation).toLocaleDateString(
                             "fr-FR"
                           )}
@@ -351,7 +361,7 @@ const AddressSearchBar = ({
               </div>
             </div>
           ) : (
-            <div className="mt-4 p-4 bg-yellow-900 rounded-md border border-yellow-700 text-yellow-100">
+            <div className="p-4 bg-yellow-50 rounded-md border border-yellow-200 text-yellow-700">
               <p>
                 {inseeResult.error ||
                   "Aucune entreprise trouvée à cette adresse"}
