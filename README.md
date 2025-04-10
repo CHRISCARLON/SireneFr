@@ -8,7 +8,7 @@ What it currently does:
 - Search national address base when and address is selected.
 - Search Sirene for all active companies on that street with at least 1 employee.
 
-<img width="1229" alt="Screenshot 2025-04-09 at 23 44 34" src="https://github.com/user-attachments/assets/cd31a6b3-9cb8-40c7-9ad0-7335ddad54b7" />
+<img width="1229" alt="Screenshot 2025-04-10 at 21 55 35" src="https://github.com/user-attachments/assets/c44dc92c-a8d8-4194-ac91-aa975008a486" />
 
 ---
 
